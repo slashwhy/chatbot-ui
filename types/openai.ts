@@ -6,24 +6,45 @@ export interface OpenAIModel {
 }
 
 export enum OpenAIModelID {
-  GPT_3_5 = 'gpt-3.5-turbo',
-  GPT_4 = 'gpt-4',
+  SLASHLLM = 'SlashLLM',
+  // MISTRAL = 'mistral',
+  MIXTRAL = 'mixtral',
+  // CODELLAMA = 'code-llama',
+  // DEEPSEEKCODER = 'deepseek-coder',
 }
 
 // in case the `DEFAULT_MODEL` environment variable is not set or set to an unsupported model
-export const fallbackModelID = OpenAIModelID.GPT_3_5;
+export const fallbackModelID = OpenAIModelID.SLASHLLM;
 
 export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
-  [OpenAIModelID.GPT_3_5]: {
-    id: OpenAIModelID.GPT_3_5,
-    name: 'GPT-3.5',
-    maxLength: 12000,
-    tokenLimit: 4000,
+  [OpenAIModelID.SLASHLLM]: {
+    id: OpenAIModelID.SLASHLLM,
+    name: 'SlashLLM',
+    maxLength: 12000, // TODO: test
+    tokenLimit: 4000, // TODO: test
   },
-  [OpenAIModelID.GPT_4]: {
-    id: OpenAIModelID.GPT_4,
-    name: 'GPT-4',
-    maxLength: 24000,
-    tokenLimit: 8000,
+  // [OpenAIModelID.MISTRAL]: {
+  //   id: OpenAIModelID.MISTRAL,
+  //   name: 'mistral',
+  //   maxLength: 12000, // TODO: test
+  //   tokenLimit: 4000, // TODO: test
+  // },
+  [OpenAIModelID.MIXTRAL]: {
+    id: OpenAIModelID.MIXTRAL,
+    name: 'mixtral',
+    maxLength: 12000, // TODO: test
+    tokenLimit: 4000, // TODO: test
   },
+  // [OpenAIModelID.CODELLAMA]: {
+  //   id: OpenAIModelID.CODELLAMA,
+  //   name: 'code-llama',
+  //   maxLength: 12000, // TODO: test
+  //   tokenLimit: 4000, // TODO: test
+  // },
+  // [OpenAIModelID.DEEPSEEKCODER]: {
+  //   id: OpenAIModelID.DEEPSEEKCODER,
+  //   name: 'deepseek-coder',
+  //   maxLength: 12000, // TODO: test
+  //   tokenLimit: 4000, // TODO: test
+  // },
 };
