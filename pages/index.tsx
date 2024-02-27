@@ -39,13 +39,11 @@ import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 
 interface HomeProps {
-  serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
   defaultModelId: OpenAIModelID;
 }
 
 const Home: React.FC<HomeProps> = ({
-  serverSideApiKeyIsSet,
   serverSidePluginKeysSet,
   defaultModelId,
 }) => {
@@ -53,7 +51,6 @@ const Home: React.FC<HomeProps> = ({
 
   // STATE ----------------------------------------------
 
-  const [apiKey, setApiKey] = useState<string>('');
   const [pluginKeys, setPluginKeys] = useState<PluginKey[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [lightMode, setLightMode] = useState<'dark' | 'light'>('dark');
@@ -113,7 +110,6 @@ const Home: React.FC<HomeProps> = ({
       const chatBody: ChatBody = {
         model: updatedConversation.model,
         messages: updatedConversation.messages,
-        key: apiKey,
         prompt: updatedConversation.prompt,
       };
 
@@ -288,15 +284,11 @@ const Home: React.FC<HomeProps> = ({
 
   // FETCH MODELS ----------------------------------------------
 
-  const fetchModels = async (key: string) => {
+  const fetchModels = async () => {
     const error = {
       title: t('Error fetching models.'),
       code: null,
       messageLines: [
-        t(
-          'Make sure your OpenAI API key is set in the bottom left of the sidebar.',
-        ),
-        t('If you completed this step, OpenAI may be experiencing issues.'),
       ],
     } as ErrorMessage;
 
@@ -306,7 +298,6 @@ const Home: React.FC<HomeProps> = ({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        key,
       }),
     });
 
@@ -338,11 +329,6 @@ const Home: React.FC<HomeProps> = ({
   const handleLightMode = (mode: 'dark' | 'light') => {
     setLightMode(mode);
     localStorage.setItem('theme', mode);
-  };
-
-  const handleApiKeyChange = (apiKey: string) => {
-    setApiKey(apiKey);
-    localStorage.setItem('apiKey', apiKey);
   };
 
   const handlePluginKeyChange = (pluginKey: PluginKey) => {
@@ -646,11 +632,9 @@ const Home: React.FC<HomeProps> = ({
     }
   }, [selectedConversation]);
 
-  useEffect(() => {
-    if (apiKey) {
-      fetchModels(apiKey);
-    }
-  }, [apiKey]);
+  // useEffect(() => {
+  //     fetchModels();
+  // });
 
   // ON LOAD --------------------------------------------
 
@@ -660,15 +644,7 @@ const Home: React.FC<HomeProps> = ({
       setLightMode(theme as 'dark' | 'light');
     }
 
-    const apiKey = localStorage.getItem('apiKey');
-    if (serverSideApiKeyIsSet) {
-      fetchModels('');
-      setApiKey('');
-      localStorage.removeItem('apiKey');
-    } else if (apiKey) {
-      setApiKey(apiKey);
-      fetchModels(apiKey);
-    }
+    fetchModels();
 
     const pluginKeys = localStorage.getItem('pluginKeys');
     if (serverSidePluginKeysSet) {
@@ -730,7 +706,7 @@ const Home: React.FC<HomeProps> = ({
         folderId: null,
       });
     }
-  }, [serverSideApiKeyIsSet]);
+  }, []);
 
   return (
     <>
@@ -762,7 +738,6 @@ const Home: React.FC<HomeProps> = ({
                   conversations={conversations}
                   lightMode={lightMode}
                   selectedConversation={selectedConversation}
-                  apiKey={apiKey}
                   pluginKeys={pluginKeys}
                   folders={folders.filter((folder) => folder.type === 'chat')}
                   onToggleLightMode={handleLightMode}
@@ -773,7 +748,6 @@ const Home: React.FC<HomeProps> = ({
                   onSelectConversation={handleSelectConversation}
                   onDeleteConversation={handleDeleteConversation}
                   onUpdateConversation={handleUpdateConversation}
-                  onApiKeyChange={handleApiKeyChange}
                   onClearConversations={handleClearConversations}
                   onExportConversations={handleExportData}
                   onImportConversations={handleImportConversations}
@@ -805,8 +779,6 @@ const Home: React.FC<HomeProps> = ({
               <Chat
                 conversation={selectedConversation}
                 messageIsStreaming={messageIsStreaming}
-                apiKey={apiKey}
-                serverSideApiKeyIsSet={serverSideApiKeyIsSet}
                 defaultModelId={defaultModelId}
                 modelError={modelError}
                 models={models}
@@ -878,7 +850,6 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   return {
     props: {
-      serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY,
       defaultModelId,
       serverSidePluginKeysSet,
       ...(await serverSideTranslations(locale ?? 'en', [
