@@ -57,11 +57,11 @@ export const ChatbarSettings: FC<Props> = ({
         }
       />
 
-      <PluginKeys
+      {/* <PluginKeys
         pluginKeys={pluginKeys}
         onPluginKeyChange={onPluginKeyChange}
         onClearPluginKey={onClearPluginKey}
-      />
+      /> */}
     </div>
   );
 };

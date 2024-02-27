@@ -121,12 +121,12 @@ const Home: React.FC<HomeProps> = ({
       } else {
         body = JSON.stringify({
           ...chatBody,
-          googleAPIKey: pluginKeys
-            .find((key) => key.pluginId === 'google-search')
-            ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
-          googleCSEId: pluginKeys
-            .find((key) => key.pluginId === 'google-search')
-            ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
+          // googleAPIKey: pluginKeys
+          //   .find((key) => key.pluginId === 'google-search')
+          //   ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
+          // googleCSEId: pluginKeys
+          //   .find((key) => key.pluginId === 'google-search')
+          //   ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
         });
       }
 
@@ -632,10 +632,6 @@ const Home: React.FC<HomeProps> = ({
     }
   }, [selectedConversation]);
 
-  // useEffect(() => {
-  //     fetchModels();
-  // });
-
   // ON LOAD --------------------------------------------
 
   useEffect(() => {
@@ -841,12 +837,12 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   let serverSidePluginKeysSet = false;
 
-  const googleApiKey = process.env.GOOGLE_API_KEY;
-  const googleCSEId = process.env.GOOGLE_CSE_ID;
+  // const googleApiKey = process.env.GOOGLE_API_KEY;
+  // const googleCSEId = process.env.GOOGLE_CSE_ID;
 
-  if (googleApiKey && googleCSEId) {
-    serverSidePluginKeysSet = true;
-  }
+  // if (googleApiKey && googleCSEId) {
+  //   serverSidePluginKeysSet = true;
+  // }
 
   return {
     props: {
