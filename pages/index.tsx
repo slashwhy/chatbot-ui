@@ -476,7 +476,7 @@ const Home: React.FC<HomeProps> = ({
         maxLength: OpenAIModels[defaultModelId].maxLength,
         tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
       },
-      prompt: DEFAULT_SYSTEM_PROMPT,
+      prompt: t(DEFAULT_SYSTEM_PROMPT),
       folderId: null,
     };
 
@@ -509,7 +509,7 @@ const Home: React.FC<HomeProps> = ({
         name: 'New conversation',
         messages: [],
         model: OpenAIModels[defaultModelId],
-        prompt: DEFAULT_SYSTEM_PROMPT,
+        prompt: t(DEFAULT_SYSTEM_PROMPT),
         folderId: null,
       });
       localStorage.removeItem('selectedConversation');
@@ -543,7 +543,7 @@ const Home: React.FC<HomeProps> = ({
       name: 'New conversation',
       messages: [],
       model: OpenAIModels[defaultModelId],
-      prompt: DEFAULT_SYSTEM_PROMPT,
+      prompt: t(DEFAULT_SYSTEM_PROMPT),
       folderId: null,
     });
     localStorage.removeItem('selectedConversation');
@@ -698,7 +698,7 @@ const Home: React.FC<HomeProps> = ({
         name: 'New conversation',
         messages: [],
         model: OpenAIModels[defaultModelId],
-        prompt: DEFAULT_SYSTEM_PROMPT,
+        prompt: t(DEFAULT_SYSTEM_PROMPT),
         folderId: null,
       });
     }
