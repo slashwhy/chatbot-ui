@@ -1,5 +1,5 @@
 export interface ProcessEnv {
-  OPENAI_API_KEY: string;
+  DEFAULT_SYSTEM_PROMPT?: string;
   OPENAI_API_HOST?: string;
-  OPENAI_ORGANIZATION?: string;
+  DEFAULT_TEMPERATURE?: number;
 }

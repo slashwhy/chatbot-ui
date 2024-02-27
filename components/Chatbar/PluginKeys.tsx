@@ -74,7 +74,7 @@ export const PluginKeys: FC<Props> = ({
               >
                 <div className="mb-10 text-4xl">Plugin Keys</div>
 
-                <div className="mt-6 rounded border p-4">
+                {/* <div className="mt-6 rounded border p-4">
                   <div className="text-xl font-bold">Google Search Plugin</div>
                   <div className="mt-4 italic">
                     Please enter your Google API Key and Google CSE ID to enable
@@ -213,7 +213,7 @@ export const PluginKeys: FC<Props> = ({
                   >
                     Clear Google Search Plugin Keys
                   </button>
-                </div>
+                </div> */}
 
                 <button
                   type="button"

@@ -4,18 +4,15 @@ import { IconFileExport, IconMoon, IconSun } from '@tabler/icons-react';
 import { useTranslation } from 'next-i18next';
 import { FC } from 'react';
 import { Import } from '../Settings/Import';
-import { Key } from '../Settings/Key';
 import { SidebarButton } from '../Sidebar/SidebarButton';
 import { ClearConversations } from './ClearConversations';
 import { PluginKeys } from './PluginKeys';
 
 interface Props {
   lightMode: 'light' | 'dark';
-  apiKey: string;
   pluginKeys: PluginKey[];
   conversationsCount: number;
   onToggleLightMode: (mode: 'light' | 'dark') => void;
-  onApiKeyChange: (apiKey: string) => void;
   onClearConversations: () => void;
   onExportConversations: () => void;
   onImportConversations: (data: SupportedExportFormats) => void;
@@ -25,11 +22,9 @@ interface Props {
 
 export const ChatbarSettings: FC<Props> = ({
   lightMode,
-  apiKey,
   pluginKeys,
   conversationsCount,
   onToggleLightMode,
-  onApiKeyChange,
   onClearConversations,
   onExportConversations,
   onImportConversations,
@@ -62,13 +57,11 @@ export const ChatbarSettings: FC<Props> = ({
         }
       />
 
-      <Key apiKey={apiKey} onApiKeyChange={onApiKeyChange} />
-
-      <PluginKeys
+      {/* <PluginKeys
         pluginKeys={pluginKeys}
         onPluginKeyChange={onPluginKeyChange}
         onClearPluginKey={onClearPluginKey}
-      />
+      /> */}
     </div>
   );
 };

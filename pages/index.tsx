@@ -20,7 +20,7 @@ import {
   cleanConversationHistory,
   cleanSelectedConversation,
 } from '@/utils/app/clean';
-import { DEFAULT_SYSTEM_PROMPT } from '@/utils/app/const';
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
 import {
   saveConversation,
   saveConversations,
@@ -39,13 +39,11 @@ import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 
 interface HomeProps {
-  serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
   defaultModelId: OpenAIModelID;
 }
 
 const Home: React.FC<HomeProps> = ({
-  serverSideApiKeyIsSet,
   serverSidePluginKeysSet,
   defaultModelId,
 }) => {
@@ -53,7 +51,6 @@ const Home: React.FC<HomeProps> = ({
 
   // STATE ----------------------------------------------
 
-  const [apiKey, setApiKey] = useState<string>('');
   const [pluginKeys, setPluginKeys] = useState<PluginKey[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [lightMode, setLightMode] = useState<'dark' | 'light'>('dark');
@@ -113,8 +110,8 @@ const Home: React.FC<HomeProps> = ({
       const chatBody: ChatBody = {
         model: updatedConversation.model,
         messages: updatedConversation.messages,
-        key: apiKey,
         prompt: updatedConversation.prompt,
+        temperature: updatedConversation.temperature,
       };
 
       const endpoint = getEndpoint(plugin);
@@ -125,12 +122,12 @@ const Home: React.FC<HomeProps> = ({
       } else {
         body = JSON.stringify({
           ...chatBody,
-          googleAPIKey: pluginKeys
-            .find((key) => key.pluginId === 'google-search')
-            ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
-          googleCSEId: pluginKeys
-            .find((key) => key.pluginId === 'google-search')
-            ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
+          // googleAPIKey: pluginKeys
+          //   .find((key) => key.pluginId === 'google-search')
+          //   ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
+          // googleCSEId: pluginKeys
+          //   .find((key) => key.pluginId === 'google-search')
+          //   ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
         });
       }
 
@@ -288,15 +285,11 @@ const Home: React.FC<HomeProps> = ({
 
   // FETCH MODELS ----------------------------------------------
 
-  const fetchModels = async (key: string) => {
+  const fetchModels = async () => {
     const error = {
       title: t('Error fetching models.'),
       code: null,
       messageLines: [
-        t(
-          'Make sure your OpenAI API key is set in the bottom left of the sidebar.',
-        ),
-        t('If you completed this step, OpenAI may be experiencing issues.'),
       ],
     } as ErrorMessage;
 
@@ -306,7 +299,6 @@ const Home: React.FC<HomeProps> = ({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        key,
       }),
     });
 
@@ -338,11 +330,6 @@ const Home: React.FC<HomeProps> = ({
   const handleLightMode = (mode: 'dark' | 'light') => {
     setLightMode(mode);
     localStorage.setItem('theme', mode);
-  };
-
-  const handleApiKeyChange = (apiKey: string) => {
-    setApiKey(apiKey);
-    localStorage.setItem('apiKey', apiKey);
   };
 
   const handlePluginKeyChange = (pluginKey: PluginKey) => {
@@ -490,10 +477,11 @@ const Home: React.FC<HomeProps> = ({
         maxLength: OpenAIModels[defaultModelId].maxLength,
         tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
       },
-      prompt: DEFAULT_SYSTEM_PROMPT,
+      prompt: t(DEFAULT_SYSTEM_PROMPT),
       folderId: null,
+      temperature: 0.5
     };
-
+    
     const updatedConversations = [...conversations, newConversation];
 
     setSelectedConversation(newConversation);
@@ -523,9 +511,10 @@ const Home: React.FC<HomeProps> = ({
         name: 'New conversation',
         messages: [],
         model: OpenAIModels[defaultModelId],
-        prompt: DEFAULT_SYSTEM_PROMPT,
+        prompt: t(DEFAULT_SYSTEM_PROMPT),
         folderId: null,
-      });
+        temperature: DEFAULT_TEMPERATURE
+    });
       localStorage.removeItem('selectedConversation');
     }
   };
@@ -557,8 +546,9 @@ const Home: React.FC<HomeProps> = ({
       name: 'New conversation',
       messages: [],
       model: OpenAIModels[defaultModelId],
-      prompt: DEFAULT_SYSTEM_PROMPT,
+      prompt: t(DEFAULT_SYSTEM_PROMPT),
       folderId: null,
+      temperature: DEFAULT_TEMPERATURE
     });
     localStorage.removeItem('selectedConversation');
 
@@ -646,12 +636,6 @@ const Home: React.FC<HomeProps> = ({
     }
   }, [selectedConversation]);
 
-  useEffect(() => {
-    if (apiKey) {
-      fetchModels(apiKey);
-    }
-  }, [apiKey]);
-
   // ON LOAD --------------------------------------------
 
   useEffect(() => {
@@ -660,15 +644,7 @@ const Home: React.FC<HomeProps> = ({
       setLightMode(theme as 'dark' | 'light');
     }
 
-    const apiKey = localStorage.getItem('apiKey');
-    if (serverSideApiKeyIsSet) {
-      fetchModels('');
-      setApiKey('');
-      localStorage.removeItem('apiKey');
-    } else if (apiKey) {
-      setApiKey(apiKey);
-      fetchModels(apiKey);
-    }
+    fetchModels();
 
     const pluginKeys = localStorage.getItem('pluginKeys');
     if (serverSidePluginKeysSet) {
@@ -726,11 +702,12 @@ const Home: React.FC<HomeProps> = ({
         name: 'New conversation',
         messages: [],
         model: OpenAIModels[defaultModelId],
-        prompt: DEFAULT_SYSTEM_PROMPT,
+        prompt: t(DEFAULT_SYSTEM_PROMPT),
         folderId: null,
+        temperature: DEFAULT_TEMPERATURE
       });
     }
-  }, [serverSideApiKeyIsSet]);
+  }, []);
 
   return (
     <>
@@ -762,7 +739,6 @@ const Home: React.FC<HomeProps> = ({
                   conversations={conversations}
                   lightMode={lightMode}
                   selectedConversation={selectedConversation}
-                  apiKey={apiKey}
                   pluginKeys={pluginKeys}
                   folders={folders.filter((folder) => folder.type === 'chat')}
                   onToggleLightMode={handleLightMode}
@@ -773,7 +749,6 @@ const Home: React.FC<HomeProps> = ({
                   onSelectConversation={handleSelectConversation}
                   onDeleteConversation={handleDeleteConversation}
                   onUpdateConversation={handleUpdateConversation}
-                  onApiKeyChange={handleApiKeyChange}
                   onClearConversations={handleClearConversations}
                   onExportConversations={handleExportData}
                   onImportConversations={handleImportConversations}
@@ -805,8 +780,6 @@ const Home: React.FC<HomeProps> = ({
               <Chat
                 conversation={selectedConversation}
                 messageIsStreaming={messageIsStreaming}
-                apiKey={apiKey}
-                serverSideApiKeyIsSet={serverSideApiKeyIsSet}
                 defaultModelId={defaultModelId}
                 modelError={modelError}
                 models={models}
@@ -869,16 +842,15 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   let serverSidePluginKeysSet = false;
 
-  const googleApiKey = process.env.GOOGLE_API_KEY;
-  const googleCSEId = process.env.GOOGLE_CSE_ID;
+  // const googleApiKey = process.env.GOOGLE_API_KEY;
+  // const googleCSEId = process.env.GOOGLE_CSE_ID;
 
-  if (googleApiKey && googleCSEId) {
-    serverSidePluginKeysSet = true;
-  }
+  // if (googleApiKey && googleCSEId) {
+  //   serverSidePluginKeysSet = true;
+  // }
 
   return {
     props: {
-      serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY,
       defaultModelId,
       serverSidePluginKeysSet,
       ...(await serverSideTranslations(locale ?? 'en', [
