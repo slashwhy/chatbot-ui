@@ -24,6 +24,7 @@ export class OpenAIError extends Error {
 export const OpenAIStream = async (
   model: OpenAIModel,
   systemPrompt: string,
+  temperature : number,
   messages: Message[],
 ) => {
   const res = await fetch(`${OPENAI_API_HOST}/v1/chat/completions`, {
@@ -40,8 +41,7 @@ export const OpenAIStream = async (
         },
         ...messages,
       ],
-      max_tokens: 1000,
-      temperature: 1,
+      temperature: temperature,
       stream: true,
     }),
   });

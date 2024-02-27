@@ -11,6 +11,7 @@ export interface ChatBody {
   model: OpenAIModel;
   messages: Message[];
   prompt: string;
+  temperature: number;
 }
 
 export interface Conversation {
@@ -19,5 +20,6 @@ export interface Conversation {
   messages: Message[];
   model: OpenAIModel;
   prompt: string;
+  temperature: number;
   folderId: string | null;
 }
